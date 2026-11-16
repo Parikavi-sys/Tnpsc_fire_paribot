@@ -1,0 +1,27 @@
+import os
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
+from telegram.ext import Application, CommandHandler, CallbackQueryHandler
+
+TOKEN = os.environ['TOKEN']
+
+async def start(update: Update, context):
+    keyboard = [
+        [InlineKeyboardButton("📜 Group 1", callback_data='group1')],
+        [InlineKeyboardButton("📚 Group 2", callback_data='group2')],
+        [InlineKeyboardButton("🔥 Rare Notes", callback_data='rare')],
+    ]
+    await update.message.reply_text(
+        "🔥 TNPSC Fire Pari Bot\nSelect:",
+        reply_markup=InlineKeyboardMarkup(keyboard)
+    )
+
+async def button(update: Update, context):
+    q = update.callback_query
+    await q.answer()
+    await q.message.reply_text(f"You clicked {q.data} - PDFs coming soon!")
+
+app = Application.builder().token(TOKEN).build()
+app.add_handler(CommandHandler("start", start))
+app.add_handler(CallbackQueryHandler(button))
+print("Bot running...")
+app.run_polling()
